@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <string.h>
 
 int main(int argc, char *argv[])
 {
@@ -22,21 +23,22 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	int fds[argc];
 	int num_files = argc-optind;
+	int fds[num_files];
 	for(int i = optind ; i < argc; i++){
 		fds[i-optind] = open(argv[i],
 				O_RDWR | O_CREAT | O_TRUNC,
 				S_IRUSR | S_IWUSR);
-		printf("File name: %s, File Descriptor: %d\n", 
-				argv[i],
-				fds[i-optind]);
 	}
 
-	//while(1){
-	//	char str[256];
-	//	scanf("%s", str);
-	//	printf("%s\n", str);
-	//}
+	while(1){
+		char str[1024];
+		scanf("%s", str);
+		int numChars = (int)strlen(str);
+		for(int i=0; i<num_files; i++){
+			int bytesWritten = write(fds[i], str, numChars);
+			bytesWritten = bytesWritten + write(fds[i], "\n", 1);
+		}
+	}
 	return 0;
 }
