@@ -33,11 +33,16 @@ int main(int argc, char *argv[])
 
 	while(1){
 		char str[1024];
-		scanf("%s", str);
+		//scanf("%s", str);
+		fgets(str, 1024, stdin); //Need to check if memory leak here. Shouldn't be since str isn't allocated on the heap
+                if ((strlen(str) > 0) && (str[strlen(str) - 1] == '\n')){
+                	str[strlen(str) - 1] = '\0';
+		}
+		printf("%s\n", str);
 		int numChars = (int)strlen(str);
 		for(int i=0; i<num_files; i++){
 			int bytesWritten = write(fds[i], str, numChars);
-			bytesWritten = bytesWritten + write(fds[i], "\n", 1);
+			bytesWritten = bytesWritten + write(fds[i],"\n", 1);
 		}
 	}
 	return 0;
